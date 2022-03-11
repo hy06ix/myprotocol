@@ -28,4 +28,6 @@ type Config struct {
 	CommunicationMode int // 0 for broadcast, 1 for gossip
 	MaxRoundLoops     int // maximum times a node can loop on a round before alerting
 	RoundsToSimulate  int
+	ShardID           int // Shard id for Sharding
+	InterShard        []*Concordia
 }

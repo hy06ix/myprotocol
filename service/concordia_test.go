@@ -33,16 +33,22 @@ func TestSharding(t *testing.T) {
 	test := onet.NewTCPTest(suite)
 	defer test.CloseAll()
 
+	// set topology for inter-shard communications
+
 	done := make(chan bool)
 
-	for i := 0; i < 2; i++ {
-		go RunConcordia(t, test, i)
+	shard := 3
+
+	interShard := make([]*Concordia, shard)
+
+	for i := 0; i < shard; i++ {
+		go RunConcordia(t, test, i, interShard)
 	}
 	<-done
 
 }
 
-func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int) {
+func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard []*Concordia) {
 	log.Lvl1("Starting test")
 	log.Lvl1(shardID)
 
@@ -51,14 +57,13 @@ func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int) {
 	// defer test.CloseAll()
 
 	// Number of nodes
-	n := 50
+	n := 10
 
 	// nshard := 2
 	// servers := make([][]*onet.Server, nshard)
 	// roster := make([]*onet.Roster, nshard)
 
 	// for i := 0; i < nshard; i++ {
-
 	// }
 	// servers[0], roster[0], _ = test.GenTree(n, true)
 	servers, roster, _ := test.GenTree(n, true)
@@ -80,10 +85,14 @@ func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int) {
 			BlockSize:         10000000,
 			MaxRoundLoops:     4,
 			RoundsToSimulate:  10,
+			ShardID:           shardID,
+			InterShard:        interShard,
 		}
 		concordias[i] = servers[i].Service(Name).(*Concordia)
 		concordias[i].SetConfig(c)
 	}
+
+	interShard[shardID] = concordias[0]
 
 	done := make(chan bool)
 	cb := func(r int) {
@@ -91,6 +100,12 @@ func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int) {
 			done <- true
 		}
 	}
+
+	println("--------------------")
+	for i := 0; i < len(interShard); i++ {
+		println(interShard[i])
+	}
+	println("--------------------")
 
 	concordias[0].AttachCallback(cb)
 	time.Sleep(time.Duration(1) * time.Second)

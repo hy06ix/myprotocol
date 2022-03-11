@@ -15,7 +15,7 @@ func init() {
 	onet.RegisterNewService(Name, NewConcordiaService)
 }
 
-// Dfinity service is either a beacon a notarizer or a block maker
+// Concordia service is either a beacon a notarizer or a block maker
 type Concordia struct {
 	*onet.ServiceProcessor
 	context    *onet.Context
@@ -24,7 +24,7 @@ type Concordia struct {
 	blockChain *BlockChain
 }
 
-// NewDfinityService
+// NewConcordiaService
 func NewConcordiaService(c *onet.Context) (onet.Service, error) {
 	n := &Concordia{
 		context:          c,
