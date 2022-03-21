@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"sync"
 	"time"
+	"unsafe"
 
 	"github.com/csanti/onet"
 	"github.com/csanti/onet/log"
@@ -31,7 +32,10 @@ type Node struct {
 	isGenesis bool
 
 	// Sharding
+	// ShardID for node
 	shardID int
+	// Backbone chain made by reference shard
+	backboneChain *BlockChain
 
 	broadcast BroadcastFn
 	gossip    BroadcastFn
@@ -86,6 +90,7 @@ func (n *Node) Process(e *network.Envelope) {
 	}
 }
 
+// Round for reference shard
 func (n *Node) NewRefRound(round int) {
 	if round > n.c.RoundsToSimulate+1 {
 		return
@@ -180,7 +185,9 @@ func (n *Node) NewRound(round int) {
 
 	// generate block proposal
 	oldBlock := n.chain.Head()
-	blob := make([]byte, n.c.BlockSize)
+
+	// blob size for reference shard
+	blob := make([]byte, int(unsafe.Sizeof(BlockHeader{}))*len(n.c.InterShard))
 	rand.Read(blob)
 	hash := rootHash(blob)
 	header := &BlockHeader{
@@ -204,9 +211,17 @@ func (n *Node) NewRound(round int) {
 		Signatures: sigs,
 		Count:      1,
 	}
+
+	// Check size of block header - 8 bytes
+	// log.Lvl1("Sending block header size is ", unsafe.Sizeof(blockProposal.BlockHeader))
+
 	log.Lvl1("Sending block of size ", len(packet.Block.Blob))
 	log.Lvlf3("Broadcasting block proposal for round %d", round)
 	go n.gossip(n.c.Roster.List, packet)
+}
+
+func (n *Node) RecievedTransactionProof(txp *TransactionProof) {
+	log.Lvl2("Receive proofs")
 }
 
 func (n *Node) ReceivedBlockProposal(p *BlockProposal) {
@@ -244,6 +259,32 @@ func (n *Node) ReceivedNotarizedBlock(nb *NotarizedBlock) {
 		n.rounds[i].FinalSig = nb.Signature
 	}
 	go n.gossip(n.c.Roster.List, nb)
+
+	if n.c.ShardID != 0 && n.c.Index == 0 {
+		// Normal shard and block proposer
+
+		// Make proof and send to other shards
+		proofs := make([]*TransactionProof, len(n.c.InterShard))
+		for i := 0; i < len(n.c.InterShard); i++ {
+			proofs[i] = &TransactionProof{}
+		}
+
+		for i, sis := range n.c.InterShard {
+			if i == 0 {
+				continue
+			}
+			go n.broadcast(sis, proofs[i])
+		}
+
+		// Send block header to reference shard
+		go n.broadcast(n.c.InterShard[0], nb.BlockHeader)
+
+	} else if n.c.ShardID == 0 && n.c.Index == 0 {
+		// Reference shard and block proposer
+		for i := 1; i < len(n.c.InterShard); i++ {
+			go n.broadcast(n.c.InterShard[i], nb)
+		}
+	}
 }
 
 func (n *Node) ReceivedBootstrap(b *Bootstrap) {
@@ -252,7 +293,11 @@ func (n *Node) ReceivedBootstrap(b *Bootstrap) {
 	if n.chain.Append(b.Block, true) != 1 {
 		panic("this should never happen")
 	}
-	n.NewRound(0)
+	if n.c.ShardID == 0 {
+		n.NewRefRound(0)
+	} else {
+		n.NewRound(0)
+	}
 }
 
 func (n *Node) roundLoop(round int) {

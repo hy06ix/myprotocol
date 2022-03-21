@@ -29,5 +29,5 @@ type Config struct {
 	MaxRoundLoops     int // maximum times a node can loop on a round before alerting
 	RoundsToSimulate  int
 	ShardID           int // Shard id for Sharding
-	InterShard        []*Concordia
+	InterShard        [][]*network.ServerIdentity
 }

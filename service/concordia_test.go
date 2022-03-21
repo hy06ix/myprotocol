@@ -8,6 +8,7 @@ import (
 
 	"github.com/csanti/onet"
 	"github.com/csanti/onet/log"
+	"github.com/csanti/onet/network"
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/kyber/v3"
 	"go.dedis.ch/kyber/v3/pairing"
@@ -37,20 +38,27 @@ func TestSharding(t *testing.T) {
 
 	done := make(chan bool)
 
-	shard := 3
+	shardNum := 2
 
-	interShard := make([]*Concordia, shard)
+	// Need to increase
+	interShardNum := 1
 
-	for i := 0; i < shard; i++ {
+	interShard := make([][]*network.ServerIdentity, shardNum)
+
+	for i := 0; i < shardNum; i++ {
+		interShard[i] = make([]*network.ServerIdentity, interShardNum)
+	}
+
+	for i := 0; i < shardNum; i++ {
 		go RunConcordia(t, test, i, interShard)
 	}
 	<-done
 
 }
 
-func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard []*Concordia) {
+func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard [][]*network.ServerIdentity) {
 	log.Lvl1("Starting test")
-	log.Lvl1(shardID)
+	// log.Lvl1(shardID)
 
 	// suite := newNetworkSuite()
 	// test := onet.NewTCPTest(suite)
@@ -92,7 +100,9 @@ func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard []
 		concordias[i].SetConfig(c)
 	}
 
-	interShard[shardID] = concordias[0]
+	// Need to fix - only one si for communicate about header, proof
+	// Enroll first si
+	interShard[shardID][0] = concordias[0].c.Roster.List[0]
 
 	done := make(chan bool)
 	cb := func(r int) {
@@ -103,7 +113,7 @@ func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard []
 
 	println("--------------------")
 	for i := 0; i < len(interShard); i++ {
-		println(interShard[i])
+		println(interShard[i][0])
 	}
 	println("--------------------")
 

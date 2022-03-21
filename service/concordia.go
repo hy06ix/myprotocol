@@ -18,10 +18,11 @@ func init() {
 // Concordia service is either a beacon a notarizer or a block maker
 type Concordia struct {
 	*onet.ServiceProcessor
-	context    *onet.Context
-	c          *Config
-	node       *Node
-	blockChain *BlockChain
+	context       *onet.Context
+	c             *Config
+	node          *Node
+	blockChain    *BlockChain
+	backboneChain *BlockChain
 }
 
 // NewConcordiaService
@@ -34,6 +35,8 @@ func NewConcordiaService(c *onet.Context) (onet.Service, error) {
 	c.RegisterProcessor(n, BootstrapType)
 	c.RegisterProcessor(n, BlockProposalType)
 	c.RegisterProcessor(n, NotarizedBlockType)
+
+	c.RegisterProcessor(n, TransactionProofType)
 	return n, nil
 }
 
@@ -126,3 +129,11 @@ func (n *Concordia) gossip(sis []*network.ServerIdentity, msg interface{}) {
 	}
 
 }
+
+// function for send header to reference shard directly
+// func (n *Concordia) send(si *network.ServerIdentity, msg interface{}) {
+// 	log.Lvlf4("Sending from: %s to: %s", n.ServerIdentity(), si)
+// 	if err := n.ServiceProcessor.SendRaw(si, msg); err != nil {
+// 		log.Lvl1("Error sending message")
+// 	}
+// }
