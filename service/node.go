@@ -148,7 +148,7 @@ func (n *Node) NewRefRound(round int) {
 		Signatures: sigs,
 		Count:      1,
 	}
-	log.Lvl1("Sending block of size ", len(packet.Block.Blob))
+	log.Lvl1("Sending block of sizes ", len(packet.Block.Blob))
 	log.Lvlf3("Broadcasting block proposal for round %d", round)
 
 	go n.gossip(n.c.Roster.List, packet)
@@ -293,7 +293,7 @@ func (n *Node) ReceivedBootstrap(b *Bootstrap) {
 	if n.chain.Append(b.Block, true) != 1 {
 		panic("this should never happen")
 	}
-	if n.c.ShardID == 1 {
+	if n.c.ShardID == 0 {
 		n.NewRefRound(0)
 	} else {
 		n.NewRound(0)
