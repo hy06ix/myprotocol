@@ -111,12 +111,12 @@ func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard []
 		}
 	}
 
-	println("--------------------")
-	for i := 0; i < len(interShard); i++ {
-		println(interShard[i])
-	}
-	println("--------------------")
-	log.Lvl1(concordias[0].c.Roster)
+	// println("--------------------")
+	// for i := 0; i < len(interShard); i++ {
+	// 	println(interShard[i])
+	// }
+	// println("--------------------")
+	// log.Lvl1(concordias[0].c.Roster)
 
 	concordias[0].AttachCallback(cb)
 	time.Sleep(time.Duration(1) * time.Second)

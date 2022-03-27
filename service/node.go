@@ -39,9 +39,10 @@ type Node struct {
 
 	broadcast BroadcastFn
 	gossip    BroadcastFn
+	send      DirectSendFn
 }
 
-func NewNodeProcess(c *onet.Context, conf *Config, b BroadcastFn, g BroadcastFn) *Node {
+func NewNodeProcess(c *onet.Context, conf *Config, b BroadcastFn, g BroadcastFn, s DirectSendFn) *Node {
 	// need to create chain first
 	chain := new(BlockChain)
 	n := &Node{
@@ -51,6 +52,7 @@ func NewNodeProcess(c *onet.Context, conf *Config, b BroadcastFn, g BroadcastFn)
 		c:                conf,
 		broadcast:        b,
 		gossip:           g,
+		send:             s,
 		rounds:           make(map[int]*RoundStorage),
 	}
 	return n
@@ -83,8 +85,14 @@ func (n *Node) Process(e *network.Envelope) {
 		n.ReceivedBlockProposal(inner)
 	case *Bootstrap:
 		n.ReceivedBootstrap(inner)
+	case *NotarizedRefBlock:
+		n.ReceivedNotarizedRefBlock(inner)
 	case *NotarizedBlock:
 		n.ReceivedNotarizedBlock(inner)
+	case *TransactionProof:
+		n.ReceivedTransactionProof(inner)
+	case *BlockHeader:
+		n.ReceivedBlockHeader(inner)
 	default:
 		log.Lvl2("Received unidentified message")
 	}
@@ -124,7 +132,9 @@ func (n *Node) NewRefRound(round int) {
 	// Change transaction block to header block
 	// generate block proposal
 	oldBlock := n.chain.Head()
-	blob := make([]byte, n.c.BlockSize)
+
+	// blob size for reference shard
+	blob := make([]byte, int(unsafe.Sizeof(BlockHeader{}))*len(n.c.InterShard))
 	rand.Read(blob)
 	hash := rootHash(blob)
 	header := &BlockHeader{
@@ -148,6 +158,10 @@ func (n *Node) NewRefRound(round int) {
 		Signatures: sigs,
 		Count:      1,
 	}
+
+	// Check size of block header - 8 bytes
+	// log.Lvl1("Sending block header size is ", unsafe.Sizeof(blockProposal.BlockHeader))
+
 	log.Lvl1("Sending block of size ", len(packet.Block.Blob))
 	log.Lvlf3("Broadcasting block proposal for round %d", round)
 
@@ -186,8 +200,7 @@ func (n *Node) NewRound(round int) {
 	// generate block proposal
 	oldBlock := n.chain.Head()
 
-	// blob size for reference shard
-	blob := make([]byte, int(unsafe.Sizeof(BlockHeader{}))*len(n.c.InterShard))
+	blob := make([]byte, n.c.BlockSize)
 	rand.Read(blob)
 	hash := rootHash(blob)
 	header := &BlockHeader{
@@ -212,16 +225,27 @@ func (n *Node) NewRound(round int) {
 		Count:      1,
 	}
 
-	// Check size of block header - 8 bytes
-	// log.Lvl1("Sending block header size is ", unsafe.Sizeof(blockProposal.BlockHeader))
-
 	log.Lvl1("Sending block of size ", len(packet.Block.Blob))
 	log.Lvlf3("Broadcasting block proposal for round %d", round)
 	go n.gossip(n.c.Roster.List, packet)
 }
 
-func (n *Node) RecievedTransactionProof(txp *TransactionProof) {
-	log.Lvl2("Receive proofs")
+func (n *Node) ReceivedTransactionProof(txp *TransactionProof) {
+	log.Lvl2("Receive Transaction proofs")
+
+	// go n.gossip(n.c.Roster.List, txp)
+}
+
+func (n *Node) ReceivedBlockHeader(bh *BlockHeader) {
+	log.Lvl2("Receive Block Header")
+
+	go n.gossip(n.c.Roster.List, bh)
+}
+
+func (n *Node) ReceivedNotarizedRefBlock(nrb *NotarizedRefBlock) {
+	log.Lvl2("Receive Backbonechain block")
+
+	go n.gossip(n.c.Roster.List, nrb)
 }
 
 func (n *Node) ReceivedBlockProposal(p *BlockProposal) {
@@ -266,24 +290,34 @@ func (n *Node) ReceivedNotarizedBlock(nb *NotarizedBlock) {
 		// Make proof and send to other shards
 		proofs := make([]*TransactionProof, len(n.c.InterShard))
 		for i := 0; i < len(n.c.InterShard); i++ {
+			// need to fill proofs
 			proofs[i] = &TransactionProof{}
 		}
 
-		// for i, sis := range n.c.InterShard {
-		// 	if i == 0 {
-		// 		continue
-		// 	}
-		// 	go n.broadcast(sis, proofs[i])
-		// }
-		go n.broadcast(n.c.InterShard, proofs)
+		for i, sis := range n.c.InterShard {
+			if i == 0 {
+				continue
+			}
+			go n.send(sis, proofs[i])
+		}
 
-		// Send block header to reference shard
-		go n.broadcast(n.c.InterShard, nb.BlockHeader)
+		// Send block header to reference shard(shardNum 0)
+		log.Lvl2("Send BlockHeader")
+
+		// Notarize need to fill Header
+		nb.BlockHeader = &BlockHeader{}
+		go n.send(n.c.InterShard[0], nb.BlockHeader)
 
 	} else if n.c.ShardID == 0 && n.c.Index == 0 {
 		// Reference shard and block proposer
 		for i := 1; i < len(n.c.InterShard); i++ {
-			go n.broadcast(n.c.InterShard, nb)
+			// Need to make diffence between normal block, ref block
+			// p := unsafe.Pointer(nb)
+			// var nrb *NotarizedRefBlock = (*NotarizedRefBlock)(p)
+			nrb := &NotarizedRefBlock{}
+
+			log.Lvl2("Broadcast backbonechain block")
+			go n.broadcast(n.c.InterShard, nrb)
 		}
 	}
 }

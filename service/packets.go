@@ -8,6 +8,8 @@ var BlockProposalType network.MessageTypeID
 var BootstrapType network.MessageTypeID
 var NotarizedBlockType network.MessageTypeID
 var TransactionProofType network.MessageTypeID
+var BlockHeaderType network.MessageTypeID
+var NotarizedRefBlockType network.MessageTypeID
 
 func init() {
 	BlockProposalType = network.RegisterMessage(&BlockProposal{})
@@ -15,6 +17,8 @@ func init() {
 	NotarizedBlockType = network.RegisterMessage(&NotarizedBlock{})
 
 	TransactionProofType = network.RegisterMessage(&TransactionProof{})
+	BlockHeaderType = network.RegisterMessage(&BlockHeader{})
+	NotarizedRefBlockType = network.RegisterMessage(&NotarizedRefBlock{})
 }
 
 type BlockProposal struct {
@@ -42,7 +46,11 @@ type NotarizedBlock struct {
 	Round       int
 	Hash        string
 	Signature   []byte
-	BlockHeader string
+	BlockHeader *BlockHeader
+}
+
+type NotarizedRefBlock struct {
+	NotarizedBlock
 }
 
 type Bootstrap struct {

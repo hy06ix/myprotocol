@@ -37,15 +37,18 @@ func NewConcordiaService(c *onet.Context) (onet.Service, error) {
 	c.RegisterProcessor(n, NotarizedBlockType)
 
 	c.RegisterProcessor(n, TransactionProofType)
+	c.RegisterProcessor(n, NotarizedRefBlockType)
+	c.RegisterProcessor(n, BlockHeaderType)
+
 	return n, nil
 }
 
 func (n *Concordia) SetConfig(c *Config) {
 	n.c = c
 	if n.c.CommunicationMode == 0 {
-		n.node = NewNodeProcess(n.context, c, n.broadcast, n.gossip)
+		n.node = NewNodeProcess(n.context, c, n.broadcast, n.gossip, n.send)
 	} else if n.c.CommunicationMode == 1 {
-		n.node = NewNodeProcess(n.context, c, n.broadcast, n.gossip)
+		n.node = NewNodeProcess(n.context, c, n.broadcast, n.gossip, n.send)
 	} else {
 		panic("Invalid communication mode")
 	}
@@ -78,7 +81,13 @@ func (n *Concordia) Process(e *network.Envelope) {
 		n.node.Process(e)
 	case *BlockProposal:
 		n.node.Process(e)
+	case *BlockHeader:
+		n.node.Process(e)
+	case *NotarizedRefBlock:
+		n.node.Process(e)
 	case *NotarizedBlock:
+		n.node.Process(e)
+	case *TransactionProof:
 		n.node.Process(e)
 	default:
 		log.Lvl1("Received unidentified message")
@@ -127,13 +136,15 @@ func (n *Concordia) gossip(sis []*network.ServerIdentity, msg interface{}) {
 			log.Lvl1("Error sending message")
 		}
 	}
-
 }
 
+type DirectSendFn func(sis *network.ServerIdentity, msg interface{})
+
 // function for send header to reference shard directly
-// func (n *Concordia) send(si *network.ServerIdentity, msg interface{}) {
-// 	log.Lvlf4("Sending from: %s to: %s", n.ServerIdentity(), si)
-// 	if err := n.ServiceProcessor.SendRaw(si, msg); err != nil {
-// 		log.Lvl1("Error sending message")
-// 	}
-// }
+func (n *Concordia) send(si *network.ServerIdentity, msg interface{}) {
+	// log.Lvl1(reflect.TypeOf(msg))
+	log.Lvlf4("Sending from: %s to: %s", n.ServerIdentity(), si)
+	if err := n.ServiceProcessor.SendRaw(si, msg); err != nil {
+		log.Lvl1("Error sending message")
+	}
+}
