@@ -10,6 +10,7 @@ Gossiptime = 100
 GossipPeers = 5
 BlockSize = 1000000
 MaxRoundLoops = 4
+ShardNum = 2
 
 Hosts
 20

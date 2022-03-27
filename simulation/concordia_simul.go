@@ -29,6 +29,7 @@ type config struct {
 	GossipPeers       int // number of neighbours that each node will gossip messages to
 	CommunicationMode int // 0 for broadcast, 1 for gossip
 	MaxRoundLoops     int // maximum times a node can loop on a round before alerting
+	ShardNum          int // Number of shards
 }
 
 type Simulation struct {
@@ -45,22 +46,25 @@ func NewSimulation(config string) (onet.Simulation, error) {
 
 func (s *Simulation) Setup(dir string, hosts []string) (*onet.SimulationConfig, error) {
 	sim := new(onet.SimulationConfig)
+	// log.Lvl1("len:", len(hosts))
 	s.CreateRoster(sim, hosts, 2000)
 	s.CreateTree(sim)
-	log.Lvlf1("-------------------------%s", sim.Roster.List)
+	// log.Lvlf1("-------------------------%s", sim.Roster.List)
 	// create the shares manually
 	return sim, nil
 }
 
 func (s *Simulation) DistributeConfig(config *onet.SimulationConfig) {
-	interShard := make([]*network.ServerIdentity, 1)
+	shares, public := dkg(s.Threshold, s.Hosts)
+	n := len(config.Roster.List)
+	_, commits := public.Info()
+
+	interShard := make([]*network.ServerIdentity, s.ShardNum-1)
 	// for i := 0; i < 1; i++ {
 	// 	interShard[i] = make([]*network.ServerIdentity, 1)
 	// }
 
-	shares, public := dkg(s.Threshold, s.Hosts)
-	n := len(config.Roster.List)
-	_, commits := public.Info()
+	shardID := 0
 
 	for i, si := range config.Roster.List {
 		c := &concordia.Config{
@@ -76,7 +80,7 @@ func (s *Simulation) DistributeConfig(config *onet.SimulationConfig) {
 			BlockSize:         s.BlockSize,
 			MaxRoundLoops:     s.MaxRoundLoops,
 			RoundsToSimulate:  s.Rounds,
-			ShardID:           0, // for test
+			ShardID:           shardID, // for test
 			InterShard:        interShard,
 		}
 		if i == 0 {
@@ -88,6 +92,7 @@ func (s *Simulation) DistributeConfig(config *onet.SimulationConfig) {
 }
 
 func (s *Simulation) Run(config *onet.SimulationConfig) error {
+	log.Lvl1(config.Roster)
 
 	log.Lvl1("distributing config to all nodes...")
 	s.DistributeConfig(config)
