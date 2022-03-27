@@ -63,12 +63,14 @@ func (n *Node) AttachCallback(fn func(int)) {
 
 func (n *Node) StartConsensus() {
 	log.Lvl1("Staring consensus")
+	log.Lvl1("Nil pointer A")
 	n.isGenesis = true
+	log.Lvl1("Nil pointer B")
 	packet := &Bootstrap{
 		Block: n.chain.CreateGenesis(),
 		Seed:  1234,
 	}
-	log.Lvl2("Starting consensus, sending bootstrap..")
+	log.Lvl1("Starting consensus, sending bootstrap..")
 	// send bootstrap message to all nodes
 	go n.broadcast(n.c.Roster.List, packet)
 	n.ReceivedBootstrap(packet)
