@@ -1,7 +1,7 @@
 package simulation
 
 import (
-	concordia "github.com/hy06ix/concordia/service"
+	concordia "github.com/hy06ix/myprotocol/service"
 	"go.dedis.ch/kyber/v3/share"
 	"go.dedis.ch/kyber/v3/util/random"
 )

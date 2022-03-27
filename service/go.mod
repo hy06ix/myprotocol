@@ -1,4 +1,4 @@
-module github.com/hy06ix/concordia/service
+module github.com/hy06ix/myprotocol/service
 
 go 1.15
 
