@@ -148,7 +148,7 @@ func (n *Node) NewRefRound(round int) {
 		Signatures: sigs,
 		Count:      1,
 	}
-	log.Lvl1("Sending block of sizes ", len(packet.Block.Blob))
+	log.Lvl1("Sending block of size ", len(packet.Block.Blob))
 	log.Lvlf3("Broadcasting block proposal for round %d", round)
 
 	go n.gossip(n.c.Roster.List, packet)

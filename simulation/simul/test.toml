@@ -1,10 +1,10 @@
 Simulation = "concordia"
 Servers = 1
-Bf = 19
+Bf = 8
 Rounds = 10
 Suite = "bn256.G2"
 Seed = 123456789
-Threshold = 10
+Threshold = 1
 CommunicationMode = 1
 Gossiptime = 100
 GossipPeers = 5
@@ -12,4 +12,4 @@ BlockSize = 1000000
 MaxRoundLoops = 4
 
 Hosts
-20
+9

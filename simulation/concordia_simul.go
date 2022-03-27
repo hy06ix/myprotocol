@@ -6,6 +6,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/csanti/onet"
 	"github.com/csanti/onet/log"
+	"github.com/csanti/onet/network"
 	"github.com/csanti/onet/simul/monitor"
 	concordia "github.com/hy06ix/myprotocol/service"
 )
@@ -46,14 +47,21 @@ func (s *Simulation) Setup(dir string, hosts []string) (*onet.SimulationConfig, 
 	sim := new(onet.SimulationConfig)
 	s.CreateRoster(sim, hosts, 2000)
 	s.CreateTree(sim)
+	log.Lvlf1("-------------------------%s", sim.Roster.List)
 	// create the shares manually
 	return sim, nil
 }
 
 func (s *Simulation) DistributeConfig(config *onet.SimulationConfig) {
+	interShard := make([][]*network.ServerIdentity, 1)
+	for i := 0; i < 1; i++ {
+		interShard[i] = make([]*network.ServerIdentity, 1)
+	}
+
 	shares, public := dkg(s.Threshold, s.Hosts)
 	n := len(config.Roster.List)
 	_, commits := public.Info()
+
 	for i, si := range config.Roster.List {
 		c := &concordia.Config{
 			Roster:            config.Roster,
@@ -68,6 +76,8 @@ func (s *Simulation) DistributeConfig(config *onet.SimulationConfig) {
 			BlockSize:         s.BlockSize,
 			MaxRoundLoops:     s.MaxRoundLoops,
 			RoundsToSimulate:  s.Rounds,
+			ShardID:           0, // for test
+			// InterShard:        interShard,
 		}
 		if i == 0 {
 			config.GetService(concordia.Name).(*concordia.Concordia).SetConfig(c)
