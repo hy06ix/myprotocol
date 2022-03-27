@@ -32,8 +32,8 @@ github.com/gorilla/websocket v1.5.0 h1:PPwGk2jz7EePpoHN/+ClbZu8SPxiqlu12wZP/3sWm
 github.com/gorilla/websocket v1.5.0/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/honeycombio/beeline-go v0.4.11/go.mod h1:xZNfHCpYQFjVS4Xuc8eMKhBclLnW/PvBz5L1Dwcp81Y=
 github.com/honeycombio/libhoney-go v1.12.3/go.mod h1:xzRFVBkKkFnse+rTORNz5bTRhyVpKbZAQCyG3hxd2jY=
-github.com/hy06ix/myprotocol/service v0.0.0-20220327180747-34549ee805ec h1:tq1F+gnROChME3VBzM0PYs+5cVOj4IXolWWeJM6QNAE=
-github.com/hy06ix/myprotocol/service v0.0.0-20220327180747-34549ee805ec/go.mod h1:YuUkYhfLz5v4/4UAYp1tlW2qJJBdz11avbI4+ulAkrc=
+github.com/hy06ix/myprotocol/service v0.0.0-20220327181801-bbd5946a3f58 h1:n78YCe+Gd9pJIf6t884D8iep8meSnqr2/L4HtyIPhfg=
+github.com/hy06ix/myprotocol/service v0.0.0-20220327181801-bbd5946a3f58/go.mod h1:YuUkYhfLz5v4/4UAYp1tlW2qJJBdz11avbI4+ulAkrc=
 github.com/klauspost/compress v1.10.2/go.mod h1:aoV0uJVorq1K+umq18yTdKaF57EivdYsUV+/s2qKfXs=
 github.com/klauspost/compress v1.10.3/go.mod h1:aoV0uJVorq1K+umq18yTdKaF57EivdYsUV+/s2qKfXs=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=

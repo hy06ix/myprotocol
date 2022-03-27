@@ -269,20 +269,21 @@ func (n *Node) ReceivedNotarizedBlock(nb *NotarizedBlock) {
 			proofs[i] = &TransactionProof{}
 		}
 
-		for i, sis := range n.c.InterShard {
-			if i == 0 {
-				continue
-			}
-			go n.broadcast(sis, proofs[i])
-		}
+		// for i, sis := range n.c.InterShard {
+		// 	if i == 0 {
+		// 		continue
+		// 	}
+		// 	go n.broadcast(sis, proofs[i])
+		// }
+		go n.broadcast(n.c.InterShard, proofs)
 
 		// Send block header to reference shard
-		go n.broadcast(n.c.InterShard[0], nb.BlockHeader)
+		go n.broadcast(n.c.InterShard, nb.BlockHeader)
 
 	} else if n.c.ShardID == 0 && n.c.Index == 0 {
 		// Reference shard and block proposer
 		for i := 1; i < len(n.c.InterShard); i++ {
-			go n.broadcast(n.c.InterShard[i], nb)
+			go n.broadcast(n.c.InterShard, nb)
 		}
 	}
 }

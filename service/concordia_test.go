@@ -41,13 +41,13 @@ func TestSharding(t *testing.T) {
 	shardNum := 2
 
 	// Need to increase
-	interShardNum := 1
+	// interShardNum := 1
 
-	interShard := make([][]*network.ServerIdentity, shardNum)
+	interShard := make([]*network.ServerIdentity, shardNum)
 
-	for i := 0; i < shardNum; i++ {
-		interShard[i] = make([]*network.ServerIdentity, interShardNum)
-	}
+	// for i := 0; i < shardNum; i++ {
+	// 	interShard[i] = make([]*network.ServerIdentity, interShardNum)
+	// }
 
 	for i := 0; i < shardNum; i++ {
 		go RunConcordia(t, test, i, interShard)
@@ -56,7 +56,7 @@ func TestSharding(t *testing.T) {
 
 }
 
-func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard [][]*network.ServerIdentity) {
+func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard []*network.ServerIdentity) {
 	log.Lvl1("Starting test")
 	// log.Lvl1(shardID)
 
@@ -102,7 +102,7 @@ func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard []
 
 	// Need to fix - only one si for communicate about header, proof
 	// Enroll first si
-	interShard[shardID][0] = concordias[0].c.Roster.List[0]
+	interShard[shardID] = concordias[0].c.Roster.List[0]
 
 	done := make(chan bool)
 	cb := func(r int) {
@@ -113,7 +113,7 @@ func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard []
 
 	println("--------------------")
 	for i := 0; i < len(interShard); i++ {
-		println(interShard[i][0])
+		println(interShard[i])
 	}
 	println("--------------------")
 	log.Lvl1(concordias[0].c.Roster)
