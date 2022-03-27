@@ -7,7 +7,7 @@ require (
 	github.com/csanti/onet v0.0.0-20200427052914-ff14cd116f04
 	github.com/daviddengcn/go-colortext v1.0.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/hy06ix/myprotocol/service v0.0.0-20220327181801-bbd5946a3f58
+	github.com/hy06ix/myprotocol/service v0.0.0-20220327185009-c4423fd58a65
 	github.com/montanaflynn/stats v0.6.6 // indirect
 	go.dedis.ch/kyber/v3 v3.0.13
 	go.etcd.io/bbolt v1.3.6 // indirect

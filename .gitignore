@@ -1,3 +1,6 @@
 # git ignore
 
 *.DS_Store
+*.csv
+*.mod
+*.sum

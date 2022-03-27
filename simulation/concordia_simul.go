@@ -53,10 +53,10 @@ func (s *Simulation) Setup(dir string, hosts []string) (*onet.SimulationConfig, 
 }
 
 func (s *Simulation) DistributeConfig(config *onet.SimulationConfig) {
-	interShard := make([][]*network.ServerIdentity, 1)
-	for i := 0; i < 1; i++ {
-		interShard[i] = make([]*network.ServerIdentity, 1)
-	}
+	interShard := make([]*network.ServerIdentity, 1)
+	// for i := 0; i < 1; i++ {
+	// 	interShard[i] = make([]*network.ServerIdentity, 1)
+	// }
 
 	shares, public := dkg(s.Threshold, s.Hosts)
 	n := len(config.Roster.List)
