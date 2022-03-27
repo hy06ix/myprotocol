@@ -77,7 +77,7 @@ func (s *Simulation) DistributeConfig(config *onet.SimulationConfig) {
 			MaxRoundLoops:     s.MaxRoundLoops,
 			RoundsToSimulate:  s.Rounds,
 			ShardID:           0, // for test
-			// InterShard:        interShard,
+			InterShard:        interShard,
 		}
 		if i == 0 {
 			config.GetService(concordia.Name).(*concordia.Concordia).SetConfig(c)
