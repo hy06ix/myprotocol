@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
-	"github.com/csanti/onet"
-	"github.com/csanti/onet/log"
-	"github.com/csanti/onet/network"
-	"github.com/csanti/onet/simul/monitor"
 	concordia "github.com/hy06ix/myprotocol/service"
+	"github.com/hy06ix/onet"
+	"github.com/hy06ix/onet/log"
+	"github.com/hy06ix/onet/network"
+	"github.com/hy06ix/onet/simul/monitor"
 )
 
 // Name is the name of the simulation
@@ -64,8 +64,6 @@ func (s *Simulation) DistributeConfig(config *onet.SimulationConfig) {
 	// 	interShard[i] = make([]*network.ServerIdentity, 1)
 	// }
 
-	shardID := 0
-
 	for i, si := range config.Roster.List {
 		c := &concordia.Config{
 			Roster:            config.Roster,
@@ -80,7 +78,7 @@ func (s *Simulation) DistributeConfig(config *onet.SimulationConfig) {
 			BlockSize:         s.BlockSize,
 			MaxRoundLoops:     s.MaxRoundLoops,
 			RoundsToSimulate:  s.Rounds,
-			ShardID:           shardID, // for test
+			ShardID:           i / (n / s.ShardNum), // for test
 			InterShard:        interShard,
 		}
 		if i == 0 {

@@ -30,6 +30,8 @@ github.com/honeycombio/beeline-go v0.4.11/go.mod h1:xZNfHCpYQFjVS4Xuc8eMKhBclLnW
 github.com/honeycombio/libhoney-go v1.12.3/go.mod h1:xzRFVBkKkFnse+rTORNz5bTRhyVpKbZAQCyG3hxd2jY=
 github.com/hy06ix/onet v0.0.0-20220329084144-2703cf69f94c h1:7XPaBJP1ad3HdVsf0wB95miO2qAB4lQKvbsTngPr3R0=
 github.com/hy06ix/onet v0.0.0-20220329084144-2703cf69f94c/go.mod h1:dYCryMWOI0l4d2Sk3sQ2XngXS5aHsq97Loali3DkRtw=
+github.com/hy06ix/onet v0.0.1-0.20220329090353-17b2c595c162 h1:ZK1fhjN+BFUM/a4op1/fNdWW+QZvh1FZGlWdmaSZ3S8=
+github.com/hy06ix/onet v0.0.1-0.20220329090353-17b2c595c162/go.mod h1:a5BV8c/uGVJz74O/tXE8mw4NTp1lrfAXzYixH2LpX4g=
 github.com/klauspost/compress v1.10.2/go.mod h1:aoV0uJVorq1K+umq18yTdKaF57EivdYsUV+/s2qKfXs=
 github.com/klauspost/compress v1.10.3/go.mod h1:aoV0uJVorq1K+umq18yTdKaF57EivdYsUV+/s2qKfXs=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
