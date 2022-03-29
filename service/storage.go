@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/csanti/onet/log"
+	"github.com/hy06ix/onet/log"
 	"go.dedis.ch/kyber/v3/share"
 	"go.dedis.ch/kyber/v3/sign/tbls"
 )

@@ -9,9 +9,9 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/csanti/onet"
-	"github.com/csanti/onet/log"
-	"github.com/csanti/onet/network"
+	"github.com/hy06ix/onet"
+	"github.com/hy06ix/onet/log"
+	"github.com/hy06ix/onet/network"
 )
 
 type Node struct {

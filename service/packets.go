@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/csanti/onet/network"
+	"github.com/hy06ix/onet/network"
 )
 
 var BlockProposalType network.MessageTypeID
