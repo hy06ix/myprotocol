@@ -325,9 +325,10 @@ func (n *Node) ReceivedNotarizedBlock(nb *NotarizedBlock) {
 func (n *Node) ReceivedBootstrap(b *Bootstrap) {
 	log.Lvl2("Processing bootstrap message... starting consensus")
 	// add genesis and start new round
-	if n.chain.Append(b.Block, true) != 1 {
-		panic("this should never happen")
-	}
+
+	// if n.chain.Append(b.Block, true) != 1 {
+	// 	panic("this should never happen")
+	// }
 	if n.c.ShardID == 0 {
 		n.NewRefRound(0)
 	} else {
