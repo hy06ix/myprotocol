@@ -325,7 +325,7 @@ func (n *Node) ReceivedNotarizedBlock(nb *NotarizedBlock) {
 func (n *Node) ReceivedBootstrap(b *Bootstrap) {
 	log.Lvl2("Processing bootstrap message... starting consensus")
 	// add genesis and start new round
-
+	n.chain.Append(b.Block, true)
 	// if n.chain.Append(b.Block, true) != 1 {
 	// 	panic("this should never happen")
 	// }
