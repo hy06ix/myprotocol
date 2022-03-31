@@ -44,6 +44,7 @@ func NewConcordiaService(c *onet.Context) (onet.Service, error) {
 }
 
 func (n *Concordia) SetConfig(c *Config) {
+	log.Lvl1("Calling SetConfig")
 	n.c = c
 	if n.c.CommunicationMode == 0 {
 		n.node = NewNodeProcess(n.context, c, n.broadcast, n.gossip, n.send)
@@ -52,6 +53,7 @@ func (n *Concordia) SetConfig(c *Config) {
 	} else {
 		panic("Invalid communication mode")
 	}
+	log.Lvl1("Finish SetConfig")
 }
 
 func (n *Concordia) AttachCallback(fn func(int, int)) {
