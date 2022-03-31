@@ -105,7 +105,7 @@ func RunConcordia(t *testing.T, test *onet.LocalTest, shardID int, interShard []
 	interShard[shardID] = concordias[0].c.Roster.List[0]
 
 	done := make(chan bool)
-	cb := func(r int) {
+	cb := func(r int, shardID int) {
 		if r > 10 {
 			done <- true
 		}

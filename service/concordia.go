@@ -54,7 +54,7 @@ func (n *Concordia) SetConfig(c *Config) {
 	}
 }
 
-func (n *Concordia) AttachCallback(fn func(int)) {
+func (n *Concordia) AttachCallback(fn func(int, int)) {
 	// attach to something.. haha lol xd
 	if n.node != nil {
 		n.node.AttachCallback(fn)

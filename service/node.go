@@ -27,7 +27,7 @@ type Node struct {
 	// information of previous rounds
 	rounds map[int]*RoundStorage
 	// done callback
-	callback func(int) // callsback number of finalized blocks
+	callback func(int, int) // callsback number of finalized blocks
 	// node started the Consensus
 	isGenesis bool
 
@@ -58,7 +58,7 @@ func NewNodeProcess(c *onet.Context, conf *Config, b BroadcastFn, g BroadcastFn,
 	return n
 }
 
-func (n *Node) AttachCallback(fn func(int)) {
+func (n *Node) AttachCallback(fn func(int, int)) {
 	// usually only attached to one of the nodes to notify a higher layer of the progress
 	n.callback = fn
 }
@@ -345,7 +345,7 @@ func (n *Node) roundLoop(round int) {
 		log.Lvlf3("%d - Exiting round %d loop", n.c.Index, round)
 		n.NewRound(round + 1)
 		if n.callback != nil {
-			n.callback(round)
+			n.callback(round, n.c.ShardID)
 		}
 		// TODO append notarized block to the blockchain
 		//delete(n.rounds, round)
