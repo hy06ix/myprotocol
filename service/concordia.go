@@ -54,6 +54,8 @@ func (n *Concordia) SetConfig(c *Config) {
 		panic("Invalid communication mode")
 	}
 	log.Lvl3("Finish SetConfig")
+	log.Lvl3(n)
+	log.Lvl3(n.node)
 }
 
 func (n *Concordia) AttachCallback(fn func(int, int)) {
