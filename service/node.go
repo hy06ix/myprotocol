@@ -78,6 +78,9 @@ func (n *Node) StartConsensus() {
 
 func (n *Node) Process(e *network.Envelope) {
 	log.Lvl2("Enter Process")
+	log.Lvl2(n)
+	log.Lvl2(n.Cond)
+	log.Lvl2(n.Cond.L)
 	n.Cond.L.Lock()
 	defer n.Cond.L.Unlock()
 	defer n.Cond.Broadcast()
