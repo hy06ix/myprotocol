@@ -77,6 +77,7 @@ func (n *Node) StartConsensus() {
 }
 
 func (n *Node) Process(e *network.Envelope) {
+	log.Lvl2("Enter Process")
 	n.Cond.L.Lock()
 	defer n.Cond.L.Unlock()
 	defer n.Cond.Broadcast()
@@ -96,6 +97,7 @@ func (n *Node) Process(e *network.Envelope) {
 	default:
 		log.Lvl2("Received unidentified message")
 	}
+	log.Lvl2("Finish Process")
 }
 
 // Round for reference shard
