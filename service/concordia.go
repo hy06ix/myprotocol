@@ -43,7 +43,7 @@ func NewConcordiaService(c *onet.Context) (onet.Service, error) {
 	return n, nil
 }
 
-func (n *Concordia) SetConfig(c *Config) {
+func (n *Concordia) SetConfig(c *Config) (node *Node) {
 	log.Lvl3("Calling SetConfig")
 	n.c = c
 	if n.c.CommunicationMode == 0 {
@@ -54,8 +54,8 @@ func (n *Concordia) SetConfig(c *Config) {
 		panic("Invalid communication mode")
 	}
 	log.Lvl3("Finish SetConfig")
-	log.Lvl3(n)
-	log.Lvl3(n.node)
+
+	return n.node
 }
 
 func (n *Concordia) AttachCallback(fn func(int, int)) {
