@@ -43,6 +43,10 @@ func NewConcordiaService(c *onet.Context) (onet.Service, error) {
 	return n, nil
 }
 
+func (n *Concordia) SetNode(node *Node) {
+	n.node = node
+}
+
 func (n *Concordia) SetConfig(c *Config) (node *Node) {
 	log.Lvl3("Calling SetConfig")
 	n.c = c
