@@ -4,13 +4,13 @@ Bf = 19
 Rounds = 10
 Suite = "bn256.G2"
 Seed = 123456789
-Threshold = 1
+Threshold = 5
 CommunicationMode = 1
 Gossiptime = 100
 GossipPeers = 5
 BlockSize = 1000000
 MaxRoundLoops = 4
-ShardNum = 2
+ShardNum = 1
 
 Hosts
 20
