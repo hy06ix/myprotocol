@@ -47,6 +47,14 @@ func (n *Concordia) SetNode(node *Node) {
 	n.node = node
 }
 
+func (n *Concordia) GetInfo() {
+	log.Lvl1(n.context)
+	log.Lvl1(n.c)
+	log.Lvl1(n.node)
+	log.Lvl1(n.blockChain)
+	log.Lvl1(n.backboneChain)
+}
+
 func (n *Concordia) SetConfig(c *Config) (node *Node) {
 	log.Lvl3("Calling SetConfig")
 	n.c = c
